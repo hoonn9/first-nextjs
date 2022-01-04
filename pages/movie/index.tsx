@@ -1,6 +1,6 @@
 import axios from "axios";
-import { GetServerSideProps, GetStaticProps } from "next";
-import { Dispatch, SetStateAction, useState, VFC } from "react";
+import { GetServerSideProps } from "next";
+import { useEffect, useState, VFC } from "react";
 import PaginationButton from "../../components/pagination/pagination-button";
 import { Movie, MoviesResponse, YifyResponse } from "../../types/yts.types";
 
@@ -10,6 +10,15 @@ interface Props {
 
 const Movie: VFC<Props> = ({ movies }) => {
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setInterval(() => {
+      console.log("check");
+    }, 100);
+
+    console.log("test");
+  }, []);
+
   return (
     <div>
       <ul>
@@ -26,14 +35,11 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   console.log("context", query);
   // const [page, setPage] = useState(1);
 
-  const { data } = await axios.get<YifyResponse<MoviesResponse>>(
-    "https://yts.mx/api/v2/list_movies.json",
-    {
-      params: {
-        page: query.page,
-      },
-    }
-  );
+  const { data } = await axios.get<YifyResponse<MoviesResponse>>("https://yts.mx/api/v2/list_movies.json", {
+    params: {
+      page: query.page,
+    },
+  });
   const movies = data.data.movies;
 
   return {

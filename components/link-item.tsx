@@ -1,6 +1,6 @@
 import { Link } from "@chakra-ui/layout";
-import { NextComponentType } from "next";
-import NextLink, { LinkProps } from "next/link";
+import { useColorModeValue } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { FC, useMemo } from "react";
 
 type Props = {
@@ -9,13 +9,12 @@ type Props = {
 };
 
 const LinkItem: FC<Props> = ({ children, href, path }) => {
-  console.log(href, path);
-
   const activate = useMemo(() => href === path, [href, path]);
-
   return (
     <NextLink href={href}>
-      <Link bg={activate ? "#325432" : undefined}>{children}</Link>
+      <Link color={useColorModeValue(activate ? "black" : "gray.100", activate ? "white" : "gray")} fontWeight="bold">
+        {children}
+      </Link>
     </NextLink>
   );
 };

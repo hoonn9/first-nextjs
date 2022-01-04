@@ -1,39 +1,31 @@
 import { useColorModeValue } from "@chakra-ui/color-mode";
-import { Box, Container, Flex, Link, Stack } from "@chakra-ui/layout";
+import { Box, Center, Container, Flex, Wrap } from "@chakra-ui/react";
 import { FC } from "react";
-import NextLink from "next/link";
 import LinkItem from "./link-item";
-import { Router } from "next/dist/client/router";
-
+import Logo from "../public/logo.png";
+import Image from "next/image";
 interface Props {
   path: string;
 }
 
 const Navbar: FC<Props> = ({ children, path }) => {
   return (
-    <Box
-      as="nav"
-      position="fixed"
-      w="100%"
-      bg={useColorModeValue("#ffffff40", "#20202380")}
-    >
-      <Container
-        display="flex"
-        p={2}
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Stack>
-          <LinkItem href="/" path={path}>
-            Home
-          </LinkItem>
-        </Stack>
-        <Stack>
-          <LinkItem href="/movie" path={path}>
-            Movies
-          </LinkItem>
-        </Stack>
-        <Stack></Stack>
+    <Box as="nav" w="100%" bg={useColorModeValue("white", "black")}>
+      <Container display="flex" p={2} alignItems="center" justifyContent="space-between">
+        <Flex w="100%">
+          <Center justifyContent="space-between" w="100%">
+            <Wrap w="8" h="8">
+              <Image src={Logo} alt="logo" />
+            </Wrap>
+            <LinkItem href="/" path={path}>
+              Home
+            </LinkItem>
+
+            <LinkItem href="/movie" path={path}>
+              Movies
+            </LinkItem>
+          </Center>
+        </Flex>
       </Container>
     </Box>
   );
