@@ -11,7 +11,7 @@ interface Props {
 const Navbar: FC<Props> = ({ children, path }) => {
   return (
     <Box as="nav" w="100%" bg={useColorModeValue("white", "black")}>
-      <Container display="flex" p={2} alignItems="center" justifyContent="space-between">
+      <Container display="flex" p={4} alignItems="center" justifyContent="space-between">
         <Flex w="100%">
           <Center justifyContent="space-between" w="100%">
             <Wrap w="8" h="8">

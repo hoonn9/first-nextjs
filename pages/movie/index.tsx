@@ -1,8 +1,12 @@
-import axios from "axios";
-import { GetServerSideProps } from "next";
-import { useEffect, useState, VFC } from "react";
+import { Button, createStandaloneToast } from "@chakra-ui/react";
+import { GetStaticProps } from "next";
+import { useState, VFC } from "react";
 import PaginationButton from "../../components/pagination/pagination-button";
+import { apiClient } from "../../core/api/client";
+import { handleError } from "../../core/error/handler";
 import { Movie, MoviesResponse, YifyResponse } from "../../types/yts.types";
+
+const toast = createStandaloneToast();
 
 interface Props {
   movies: ReadonlyArray<Movie>;
@@ -10,14 +14,6 @@ interface Props {
 
 const Movie: VFC<Props> = ({ movies }) => {
   const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    setInterval(() => {
-      console.log("check");
-    }, 100);
-
-    console.log("test");
-  }, []);
 
   return (
     <div>
@@ -31,36 +27,15 @@ const Movie: VFC<Props> = ({ movies }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  console.log("context", query);
-  // const [page, setPage] = useState(1);
-
-  const { data } = await axios.get<YifyResponse<MoviesResponse>>("https://yts.mx/api/v2/list_movies.json", {
-    params: {
-      page: query.page,
-    },
-  });
-  const movies = data.data.movies;
-
-  return {
-    props: {
-      movies: movies,
-    },
-  };
-};
-
-// export const getStaticProps: GetStaticProps = async (context) => {
-//   console.log("context", context);
+// export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+//   console.log("context", query);
 //   // const [page, setPage] = useState(1);
 
-//   const { data } = await axios.get<YifyResponse<MoviesResponse>>(
-//     "https://yts.mx/api/v2/list_movies.json",
-//     {
-//       params: {
-//         page: 1,
-//       },
-//     }
-//   );
+//   const { data } = await axios.get<YifyResponse<MoviesResponse>>("https://yts.mx/api/v2/list_movies.json", {
+//     params: {
+//       page: query.page,
+//     },
+//   });
 //   const movies = data.data.movies;
 
 //   return {
@@ -69,5 +44,40 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 //     },
 //   };
 // };
+
+// 페이지를 렌더링하는 데 필요한 데이터는 사용자의 요청에 앞서 빌드 시 사용
+export const getStaticProps: GetStaticProps = async (context) => {
+  try {
+    const { data } = await apiClient<YifyResponse<MoviesResponse>>({
+      method: "get",
+      url: "/v2/list_movies.jsn",
+      params: {
+        page: 1,
+      },
+    });
+
+    const movies = data.data.movies;
+
+    return {
+      props: {
+        movies: movies,
+      },
+    };
+  } catch (error) {
+    handleError(error);
+
+    // Not Found render
+    // return {
+    //   notFound: true,
+    // };
+
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+};
 
 export default Movie;
